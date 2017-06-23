@@ -7,6 +7,8 @@
 zone=Math.exp(1.25);
 xx=0;
 yy=0;
+rz=0;
+iz=0;
 function screen(w,h){
 this.h=h;
 this.w=w;
@@ -67,7 +69,14 @@ if(z.mod()>2) return false;
 
 return true;
 }
-
+function julia(z){
+a=new comp(iz,rz);
+for(var i=0;i<100;i++){
+z=z.add(z.pow2(),a);
+if(z.mod()>2) return false;
+}
+return true;
+}
 function ol(){
 re();
 var canvas = document.getElementById("testCanvas");
@@ -79,14 +88,17 @@ for(var x=0;x<w;x++){
 for(var y=0;y<h;y++){
 var c=new comp((zone*(x-0.5*w)/w)+xx,(zone*(y-0.5*h)/h)+yy);
 var col=0;
+if($("input[name='s'][checked]").val()=="m") 
 mondelbrot(c)?col=0:col=255;
+else
+julia(c)?col=0:col=255;
 sr.set(new Array(col,col,col),x,y);
 }
 }
 sr.display();
 }
   $(function() {
-    $( "#r, #i" ).slider({
+    $( "#r, #i,#rz,#iz" ).slider({
       orientation: "horizontal",
       max: 2,
 		min:-2,
@@ -104,6 +116,8 @@ sr.display();
       change: re,
 		step:0.001
     });
+	$("#d").hide();
+$("input[name='s'][value='m']").attr("checked",true); 
   });
 function re(){
 xx=$( "#r" ).slider("value");
@@ -112,6 +126,10 @@ zone=Math.exp($( "#zone" ).slider("value"))
 $("#rr").html("Real:"+xx);
 $("#ii").html("Imag:"+yy);
 $("#zz").html("Zone:"+zone);
+rz=$( "#rz" ).slider("value");
+iz=$( "#iz" ).slider("value");
+$("#rrz").html("Real:"+rz);
+$("#iiz").html("Imag:"+iz);
 }
 function view(){
 $("#rr").html("Real:"+xx);
@@ -128,14 +146,18 @@ $( "#i" ).slider({value:yy});
 <canvas width="512" height="512" id="testCanvas"></canvas><br>
 <button onclick="ol()">run</button>
 <br>
-<button onclick="(function(){yy+=zone/2;view();})()">up</button>
-<button onclick="(function(){yy-=zone/2;view();})()">down</button>
-<button onclick="(function(){xx+=zone/2;view();})()">left</button>
-<button onclick="(function(){xx-=zone/2;view();})()">right</button>
+<button onclick="(function(){yy-=zone/2;view();})()">up</button>
+<button onclick="(function(){yy+=zone/2;view();})()">down</button>
+<button onclick="(function(){xx-=zone/2;view();})()">left</button>
+<button onclick="(function(){xx+=zone/2;view();})()">right</button>
 <br><br>
 <div id="r"></div><a id="rr">Real:0</a><br>
 <div id="i"></div><a id="ii">Imag:0</a><br>
-<div id="zone"></div><a id="zz">Zone:1</a><br><nr>
+<input name="s" value="m" type="radio" checked="true" onclick="(function(){$('#d').hide();})()"/><span>Mondelbrot set</span>
+<input name="s" value="j" type="radio" onclick="(function(){$('#d').show();})()"/><span>Julia set</span><br><div id="d">
+<div id="zone"></div><a id="zz">Zone:1</a><br><a>C of Julia set:</a><br>
+<div id="rz"></div><a id="rrz">Real:0</a><br>
+<div id="iz"></div><a id="iiz">Imag:0</a><br></div>
 </div></center>
 </body>
 </html>
