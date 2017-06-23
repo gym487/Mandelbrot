@@ -118,7 +118,6 @@ $("#rr").html("Real:"+xx);
 $("#ii").html("Imag:"+yy);
 $("#zz").html("Zone:"+zone);
 $( "#r" ).slider({value:xx});
-$( "#i" ).slider({value:yy});
 }
 </script>
 </head>
