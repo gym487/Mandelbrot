@@ -1,0 +1,134 @@
+<html>
+<haed>
+<link rel="stylesheet" href="./jqueryui.css">
+<script src="./jquery.js"></script>
+<script src="./jqueryui.js"></script>
+<script>
+zone=Math.exp(1.25);
+xx=0;
+yy=0;
+function screen(w,h){
+this.h=h;
+this.w=w;
+this.scr=new Array();
+for (var y = 0; y < h; y++){
+this.scr.push(new Array());
+for (var x = 0; x < w; x++){
+this.scr[y].push(new Array(0,0,0));
+}
+}
+this.set=function(v,x,y){
+this.scr[y][x]=v;
+}
+this.display=function(){
+var canvas =document.getElementById("testCanvas");
+var ctx = canvas.getContext("2d");
+var w = canvas.attributes.width.value;
+var h = canvas.attributes.height.value;
+ctx.fillStyle = "rgb(0,0,0)";
+ctx.fillRect(0, 0, w, h);
+var imgdata = ctx.getImageData(0, 0, w, h);
+var pixels = imgdata.data;
+var i = 0;
+for (var y = 0; y < h; y++)
+    for (var x = 0; x < w; x++)
+    {
+        pixels[i++] = this.scr[y][x][0];
+        pixels[i++] = this.scr[y][x][1];
+        pixels[i++] = this.scr[y][x][2];
+        pixels[i++] = 255;
+    }
+ctx.putImageData(imgdata, 0, 0);
+}
+}
+
+function comp(r,i){
+this.r=r;
+this.i=i;
+this.pow2=function(){
+return this.mul(this,this);
+}
+this.mod=function(){
+return Math.sqrt(Math.pow(this.r,2)+Math.pow(this.i,2));
+}
+}
+comp.prototype.add=function(a,b){
+return new comp(a.r+b.r,a.i+b.i);
+}
+comp.prototype.mul=function(a,b){
+return new comp(a.r*b.r-a.i*b.i,a.i*b.r+a.r*b.i);
+}
+function mondelbrot(a){
+z=new comp(0,0);
+for(var i=0;i<100;i++){
+z=z.add(z.pow2(),a);
+if(z.mod()>2) return false;
+}
+
+return true;
+}
+
+function ol(){
+re();
+var canvas = document.getElementById("testCanvas");
+var ctx = canvas.getContext("2d");
+var w = canvas.attributes.width.value;
+var h = canvas.attributes.height.value;
+var sr=new screen(w,h);
+for(var x=0;x<w;x++){
+for(var y=0;y<h;y++){
+var c=new comp((zone*(x-0.5*w)/w)+xx,(zone*(y-0.5*h)/h)+yy);
+var col=0;
+mondelbrot(c)?col=0:col=255;
+sr.set(new Array(col,col,col),x,y);
+}
+}
+sr.display();
+}
+  $(function() {
+    $( "#r, #i" ).slider({
+      orientation: "horizontal",
+      max: 2,
+		min:-2,
+      value: 0,
+      slide: re,
+      change: re,
+		step:0.001
+    });
+	$( "#zone" ).slider({
+      orientation: "horizontal",
+      max: 2,
+		min:-10,
+      value: 1.25,
+      slide: re,
+      change: re,
+		step:0.001
+    });
+  });
+function re(){
+xx=$( "#r" ).slider("value");
+yy=$( "#i" ).slider("value");
+zone=Math.exp($( "#zone" ).slider("value"))
+$("#rr").html("Real:"+xx);
+$("#ii").html("Imag:"+yy);
+$("#zz").html("Zone:"+zone);
+}
+</script>
+</head>
+<body onload="ol()">
+<center>
+<div style="width:1000px;height:650px;border:#ccc solid 1px;">
+<canvas width="512" height="512" id="testCanvas"></canvas><br>
+<button onclick="ol()">run</button>
+<br>
+<button onclick="function(){yy+=zone/2;re();}">up</button>
+<button onclick="function(){yy-=zone/2;re();}">down</button>
+<button onclick="function(){xx+=zone/2;re();}">left</button>
+<button onclick="function(){xx-=zone/2;re();}">right</button>
+<br><br>
+<div id="r"></div><a id="rr">Real:0</a><br>
+<div id="i"></div><a id="ii">Imag:0</a><br>
+<div id="zone"></div><a id="zz">Zone:1</a><br><nr>
+</div></center>
+</body>
+</html>
