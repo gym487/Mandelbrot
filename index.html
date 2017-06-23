@@ -128,10 +128,10 @@ $( "#i" ).slider({value:yy});
 <canvas width="512" height="512" id="testCanvas"></canvas><br>
 <button onclick="ol()">run</button>
 <br>
-<button onclick="function(){yy+=zone/2;re();}">up</button>
-<button onclick="function(){yy-=zone/2;re();}">down</button>
-<button onclick="function(){xx+=zone/2;re();}">left</button>
-<button onclick="function(){xx-=zone/2;re();}">right</button>
+<button onclick="(function(){yy+=zone/2;view();})()">up</button>
+<button onclick="(function(){yy-=zone/2;view();})()">down</button>
+<button onclick="(function(){xx+=zone/2;view();})()">left</button>
+<button onclick="(function(){xx-=zone/2;view();})()">right</button>
 <br><br>
 <div id="r"></div><a id="rr">Real:0</a><br>
 <div id="i"></div><a id="ii">Imag:0</a><br>
